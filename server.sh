@@ -48,7 +48,6 @@ sed -i "s|APP_URL=.*|APP_URL=$appurl|g" .env || { echo "Sed command failed"; exi
 sed -i 's|APP_NAME=.*|APP_NAME="Forsure Real Estate Ltd"|g' .env || { echo "Sed command failed"; exit 1; }
 
 # using Spatie/laravel-site-map. Like you would mnuse  unguard in Laravel to Seed
-sudo php artisan sitemap:generate
 
 ## Finally set the right file and folder permissions
 sudo chown -R www-data:www-data /var/www/html/"$foldername"/
@@ -62,6 +61,7 @@ sudo chmod -Rf 775 storage/ bootstrap/
 # Run necessary Laravel commands
 php artisan storage:link
 sudo php artisan key:generate
+sudo php artisan sitemap:generate
 
 # Necessary Caches
 php artisan config:cache
