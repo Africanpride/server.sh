@@ -9,6 +9,7 @@ fi
 read -p "Enter the URL of the Git repository to clone: " repourl
 read -p "Enter the name of the folder to clone the repository into: " foldername
 read -p "Specify full path to your .env file. eg. ~/.env : " dotenvFile
+read -p "Enter the desired APP_URL (e.g. https://example.com): " appurl
 
 # Clone or update the repository
 cd /var/www/html/
@@ -27,8 +28,10 @@ npm install && npm run build || { echo "NPM install failed"; exit 1; }
 # Specify your current .env file source
 cp "$dotenvFile" .
 
-#set APP_DEBUG to false 
+#set dot env parameters
 sed -i 's/APP_DEBUG=true/APP_DEBUG=false/g' "$dotenvFile" || { echo "Sed command failed"; exit 1; }
+sed -i 's/APP_ENV=production/APP_ENV=local/g' "$dotenvFile" || { echo "Sed command failed"; exit 1; }
+sed -i "s|APP_URL=.*|APP_URL=$appurl|g" "$dotenvFile" || { echo "Sed command failed"; exit 1; }
 
 ## Finally set the right file and folder permissions
 sudo chown -R www-data:www-data /var/www/html/"$foldername"/
