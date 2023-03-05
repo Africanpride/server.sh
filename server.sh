@@ -26,7 +26,7 @@ composer install --optimize-autoloader --no-dev --working-dir=/var/www/html/"$fo
 npm install && npm run build || { echo "NPM install failed"; exit 1; }
 
 # Specify your current .env file source
-cp "$dotenvFile" .
+cp ~/.env .
 
 #set dot env parameters
 sed -i 's/APP_DEBUG=true/APP_DEBUG=false/g' ./env || { echo "Sed command failed"; exit 1; }
