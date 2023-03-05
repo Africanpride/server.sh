@@ -7,14 +7,27 @@ if [ "$confirm" != "y" ]; then
 fi
 
 read -p "Enter the URL of the Git repository to clone: " repourl
+repourl=${repourl:-https://github.com/forsureproject/final_render.git}
+
 read -p "Enter the name of the folder to clone the repository into: " foldername
-read -p "Specify full path to your .env file. eg. ~/.env : " dotenvFile
+foldername=${foldername:-forsure}
+
 read -p "Enter the desired APP_URL (e.g. https://example.com): " appurl
+appurl=${appurl:-https://www.forsure-realty.com}
+
+read -p "Enter the desired APP_ NAME (e.g. Forsure Real Estate Ltd): " websitename
+websitename=${websitename:-'"Forsure Real Estate Ltd"'}
+
+read -p "Specify full path to your .env file. eg. ~/.env : " dotenvFile
+dotenvFile=${dotenvFile:-~/.env}
+
+
 
 # Clone or update the repository
 cd /var/www/html/
 sudo rm -rf "$foldername"
 sudo mkdir -p "$foldername"
+
 cd "$foldername"
 sudo chown -R $USER:www-data /var/www/html/"$foldername"/
 git clone "$repourl" .
@@ -29,9 +42,13 @@ npm install && npm run build || { echo "NPM install failed"; exit 1; }
 cp ~/.env .
 
 #set dot env parameters
-sed -i 's/APP_DEBUG=true/APP_DEBUG=false/g' ./env || { echo "Sed command failed"; exit 1; }
-sed -i 's/APP_ENV=production/APP_ENV=local/g' ./env || { echo "Sed command failed"; exit 1; }
-sed -i "s|APP_URL=.*|APP_URL=$appurl|g" ./env || { echo "Sed command failed"; exit 1; }
+sed -i 's/APP_DEBUG=true/APP_DEBUG=false/g' .env || { echo "Sed command failed"; exit 1; }
+sed -i 's/APP_ENV=local/APP_ENV=production/g' .env || { echo "Sed command failed"; exit 1; }
+sed -i "s|APP_URL=.*|APP_URL=$appurl|g" .env || { echo "Sed command failed"; exit 1; }
+sed -i 's|APP_NAME=.*|APP_NAME="Forsure Real Estate Ltd"|g' .env || { echo "Sed command failed"; exit 1; }
+
+# using Spatie/laravel-site-map. Like you would mnuse  unguard in Laravel to Seed
+sudo php artisan sitemap:generate
 
 ## Finally set the right file and folder permissions
 sudo chown -R www-data:www-data /var/www/html/"$foldername"/
@@ -44,10 +61,7 @@ sudo chmod -Rf 775 storage/ bootstrap/
 
 # Run necessary Laravel commands
 php artisan storage:link
-php artisan key:generate
-
-# using Spatie/laravel-site-map
-php artisan sitemap:generate
+sudo php artisan key:generate
 
 # Necessary Caches
 php artisan config:cache
