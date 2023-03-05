@@ -29,9 +29,9 @@ npm install && npm run build || { echo "NPM install failed"; exit 1; }
 cp "$dotenvFile" .
 
 #set dot env parameters
-sed -i 's/APP_DEBUG=true/APP_DEBUG=false/g' "$dotenvFile" || { echo "Sed command failed"; exit 1; }
-sed -i 's/APP_ENV=production/APP_ENV=local/g' "$dotenvFile" || { echo "Sed command failed"; exit 1; }
-sed -i "s|APP_URL=.*|APP_URL=$appurl|g" "$dotenvFile" || { echo "Sed command failed"; exit 1; }
+sed -i 's/APP_DEBUG=true/APP_DEBUG=false/g' ./env || { echo "Sed command failed"; exit 1; }
+sed -i 's/APP_ENV=production/APP_ENV=local/g' ./env || { echo "Sed command failed"; exit 1; }
+sed -i "s|APP_URL=.*|APP_URL=$appurl|g" ./env || { echo "Sed command failed"; exit 1; }
 
 ## Finally set the right file and folder permissions
 sudo chown -R www-data:www-data /var/www/html/"$foldername"/
